@@ -7,22 +7,31 @@ import spock.lang.*
 @Mock(StatusReport)
 class StatusReportControllerSpec extends Specification {
 
+   StatusReportService statusReportServiceMock = Mock(StatusReportService)
+
+    def setup() {
+        controller.statusReportService = statusReportServiceMock
+    }
+
     def populateValidParams(params) {
         assert params != null
 
         // TODO: Populate valid properties like...
         //params["name"] = 'someValidName'
-        assert false, "TODO: Provide a populateValidParams() implementation for this generated test suite"
+        params["name"] = 'Tom'
+        params["yesterdayAccomplished"] = 'Not Much'
+        params["todayPlan"] = 'A little more'
+        params["impediments"] = 'Email Server down'
+        params["date"] = new Date() 
     }
 
-    void "Test the index action returns the correct model"() {
+    void "Test the date action returns the correct model"() {
 
         when:"The index action is executed"
-            controller.index()
+            controller.date()
 
         then:"The model is correct"
             !model.statusReportList
-            model.statusReportCount == 0
     }
 
     void "Test the create action returns the correct model"() {
@@ -148,5 +157,47 @@ class StatusReportControllerSpec extends Specification {
             StatusReport.count() == 0
             response.redirectedUrl == '/statusReport/index'
             flash.message != null
+    }
+
+    private getForwardedParams() {
+        parseResponseForwardedUrl()[1]
+    }
+
+    private String getForwardedUrl() {
+        parseResponseForwardedUrl()[0]
+    }
+
+    private parseResponseForwardedUrl() {
+        // Pattern for forwardedUrl stored in response.
+        def forwardedUrlPattern = ~/\/grails\/(.*)?\.dispatch\?*(.*)/
+
+        // Match forwardedUrl in response with pattern.
+        def matcher = response.forwardedUrl =~ forwardedUrlPattern
+
+        def forwardUrl = null
+        def forwardParameters = [:]
+
+        if (matcher) {
+            // Url is first group in pattern. We add '/' so it has the same format as redirectedUrl from response.
+            forwardUrl = "/${matcher[0][1]}"
+
+            // Parse parameters that are available in the forwardedUrl of the response.
+            forwardParameters = parseResponseForwardedParams(matcher[0][2])
+        }
+
+        [forwardUrl, forwardParameters]
+    }
+
+    private parseResponseForwardedParams(final String queryString) {
+        // Query string has format paramName=paramValue¶m2Name=param2Value. & is optional.
+        def parameters = queryString.split('&')
+
+        // Turn the paramName=paramValue parts into a Map.
+        def forwardParameters = parameters.inject([:]) { result, parameter ->
+            def (parameterName, parameterValue) = parameter.split('=')
+            result[parameterName] = parameterValue
+            result
+        }
+        forwardParameters
     }
 }

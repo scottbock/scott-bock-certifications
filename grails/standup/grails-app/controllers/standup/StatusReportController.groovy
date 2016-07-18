@@ -5,12 +5,19 @@ import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
 class StatusReportController {
+    def statusReportService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
+    def date(Integer offset) {
+        offset = offset ?: 0
+        Date date = new Date() - offset
+
+        respond statusReportService.getStatusReportsForDate(date), model:[date: date, offset: offset]
+    }
+
     def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond StatusReport.list(params), model:[statusReportCount: StatusReport.count()]
+        forward action: "date"
     }
 
     def show(StatusReport statusReport) {
@@ -105,12 +112,5 @@ class StatusReportController {
         }
     }
 
-    def date(Integer offset) {
-        offset = offset ?: 0
-        Date start = new Date() - offset
-        start.set(hourOfDay: 0, minute: 0, second: 0)
-        Date end = new Date() - offset
-        end.set(hourOfDay: 23, minute: 59, second: 59)
-        respond StatusReport.findAllByDateLessThanAndDateGreaterThan(end, start), model:[date: start, offset: offset]
-    }
+
 }
