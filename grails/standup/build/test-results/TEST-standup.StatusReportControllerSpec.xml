@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="standup.StatusReportControllerSpec" tests="7" skipped="0" failures="0" errors="0" timestamp="2016-05-28T03:13:00" hostname="BockMac.local" time="2.789">
+  <properties/>
+  <testcase name="Test the date action returns the correct model" classname="standup.StatusReportControllerSpec" time="2.339"/>
+  <testcase name="Test the create action returns the correct model" classname="standup.StatusReportControllerSpec" time="0.12"/>
+  <testcase name="Test the save action correctly persists an instance" classname="standup.StatusReportControllerSpec" time="0.258"/>
+  <testcase name="Test that the show action returns the correct model" classname="standup.StatusReportControllerSpec" time="0.01"/>
+  <testcase name="Test that the edit action returns the correct model" classname="standup.StatusReportControllerSpec" time="0.009"/>
+  <testcase name="Test the update action performs an update on a valid domain instance" classname="standup.StatusReportControllerSpec" time="0.032"/>
+  <testcase name="Test that the delete action deletes an instance if it exists" classname="standup.StatusReportControllerSpec" time="0.018"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
