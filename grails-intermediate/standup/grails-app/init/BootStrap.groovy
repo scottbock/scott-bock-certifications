@@ -1,4 +1,4 @@
-import standup.*
+import standup.StatusReport
 
 class BootStrap {
 
@@ -7,7 +7,6 @@ class BootStrap {
 		new StatusReport(name:'Bill', yesterdayAccomplished:'Started Story', todayPlan:'Finish story', date: new Date()).save(failOnError: true)
     	new StatusReport(name:'Bill', yesterdayAccomplished:'Finished Story', todayPlan:'Start new story', impediments:'Nothing', date: new Date() - 1).save(failOnError: true)
 		new StatusReport(name:'Joe', yesterdayAccomplished:'Started Story', todayPlan:'Finish story', date: new Date() - 1).save(failOnError: true)
-		new StandupUser( username : 'admin',  password : 'password').save(failOnError: true);
     }
     def destroy = {
     }

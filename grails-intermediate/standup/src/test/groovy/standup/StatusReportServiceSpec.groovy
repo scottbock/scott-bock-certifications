@@ -1,7 +1,8 @@
 package standup
 
-import grails.test.mixin.*
-import spock.lang.*
+import grails.test.mixin.Mock
+import grails.test.mixin.TestFor
+import spock.lang.Specification
 
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
@@ -10,14 +11,14 @@ import spock.lang.*
 @Mock(StatusReport)
 class StatusReportServiceSpec extends Specification {
 
-    def setup() {
-    }
+    void "test get reports for date"() {
+        given:
+        def date = new Date()
 
-    def cleanup() {
-    }
+        when:
+        def reports = service.getStatusReportsForDate(date)
 
-    void "test something"() {
-        expect:"fix me"
-            true == true
+        then:
+        reports != null;
     }
 }

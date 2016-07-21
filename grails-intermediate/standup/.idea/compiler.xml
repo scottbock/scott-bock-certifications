@@ -18,5 +18,10 @@
         <processorPath useClasspath="true" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="standup_integrationTest" target="1.8" />
+      <module name="standup_main" target="1.8" />
+      <module name="standup_test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
