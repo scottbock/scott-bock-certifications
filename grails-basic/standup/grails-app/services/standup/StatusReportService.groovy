@@ -13,4 +13,15 @@ class StatusReportService {
 
         StatusReport.findAllByDateLessThanAndDateGreaterThan(end, start)
     }
+
+    @Transactional
+    def save (StatusReport statusReport) {
+        statusReport.save flush: true
+    }
+
+    @Transactional
+    def delete(StatusReport statusReport) {
+        statusReport.delete flush: true
+    }
+
 }

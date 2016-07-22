@@ -11,6 +11,7 @@ class StatusReportControllerSpec extends Specification {
 
     def setup() {
         controller.statusReportService = statusReportServiceMock
+        statusReportServiceMock.save(_ as StatusReport) >> {args -> args[0].setId(1)}
     }
 
     def populateValidParams(params) {
@@ -43,7 +44,6 @@ class StatusReportControllerSpec extends Specification {
     }
 
     void "Test the save action correctly persists an instance"() {
-
         when:"The save action is executed with an invalid instance"
             request.contentType = FORM_CONTENT_TYPE
             request.method = 'POST'
@@ -65,7 +65,6 @@ class StatusReportControllerSpec extends Specification {
         then:"A redirect is issued to the show action"
             response.redirectedUrl == '/statusReport/show/1'
             controller.flash.message != null
-            StatusReport.count() == 1
     }
 
     void "Test that the show action returns the correct model"() {
@@ -154,7 +153,7 @@ class StatusReportControllerSpec extends Specification {
             controller.delete(statusReport)
 
         then:"The instance is deleted"
-            StatusReport.count() == 0
+            1 * statusReportServiceMock.delete(_)
             response.redirectedUrl == '/statusReport/index'
             flash.message != null
     }
