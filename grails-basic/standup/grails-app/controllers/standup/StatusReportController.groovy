@@ -28,21 +28,18 @@ class StatusReportController {
         respond new StatusReport(params)
     }
 
-    @Transactional
     def save(StatusReport statusReport) {
         if (statusReport == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
         if (statusReport.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond statusReport.errors, view:'create'
             return
         }
 
-        statusReport.save flush:true
+        statusReportService.save statusReport
 
         request.withFormat {
             form multipartForm {
@@ -57,21 +54,18 @@ class StatusReportController {
         respond statusReport
     }
 
-    @Transactional
     def update(StatusReport statusReport) {
         if (statusReport == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
         if (statusReport.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond statusReport.errors, view:'edit'
             return
         }
 
-        statusReport.save flush:true
+        statusReportService.save statusReport
 
         request.withFormat {
             form multipartForm {
@@ -82,16 +76,14 @@ class StatusReportController {
         }
     }
 
-    @Transactional
     def delete(StatusReport statusReport) {
 
         if (statusReport == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
-        statusReport.delete flush:true
+        statusReportService.delete statusReport
 
         request.withFormat {
             form multipartForm {
