@@ -26,12 +26,15 @@
                 <a class="navbar-brand" href="/#">
                     <i class="fa grails-icon">
                         <asset:image src="grails-cupsonly-logo-white.svg"/>
-                    </i> Grails
+                    </i> Home
                 </a>
             </div>
             <div class="navbar-collapse collapse" aria-expanded="false" style="height: 0.8px;">
                 <ul class="nav navbar-nav navbar-right">
-                    <g:pageProperty name="page.nav" />
+                    <li><a href="/user/register">Register</a></li>
+                    <li><a href="/statusReport/create">Enter Your Status</a></li>
+                    <li><a href="/statusReport/date">Today's Status</a></li>
+                    <li><g:link controller='logout'>Logout</g:link></li>
                 </ul>
             </div>
         </div>

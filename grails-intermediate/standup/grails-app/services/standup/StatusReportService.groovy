@@ -6,11 +6,22 @@ import grails.transaction.Transactional
 class StatusReportService {
 
     def getStatusReportsForDate(Date date) {
-    	Date start = date.clone()
-    	start.set(hourOfDay: 0, minute: 0, second: 0)
+        Date start = date.clone() - 1
+        start.set(hourOfDay: 23, minute: 59, second: 59)
         Date end = date.clone()
         end.set(hourOfDay: 23, minute: 59, second: 59)
 
-        StatusReport.findAllByDateLessThanAndDateGreaterThan(end, start)
+        StatusReport.findAllByDateBetween(start, end)
     }
+
+    @Transactional
+    def save (StatusReport statusReport) {
+        statusReport.save flush: true
+    }
+
+    @Transactional
+    def delete(StatusReport statusReport) {
+        statusReport.delete flush: true
+    }
+
 }

@@ -2,7 +2,7 @@ package standup
 
 class StatusReport {
 
-	String name
+	User user
 	String yesterdayAccomplished
 	String todayPlan
 	String impediments
@@ -10,7 +10,7 @@ class StatusReport {
 
 	static constraints = {
 	  date()
-	  name()
+	  user()
 	  yesterdayAccomplished()
 	  todayPlan()
 	  impediments(nullable: true)

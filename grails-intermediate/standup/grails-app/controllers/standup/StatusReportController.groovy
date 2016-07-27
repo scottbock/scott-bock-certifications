@@ -1,14 +1,18 @@
 package standup
 
-import static org.springframework.http.HttpStatus.*
+import grails.plugin.springsecurity.annotation.Secured
 import grails.transaction.Transactional
+
+import static org.springframework.http.HttpStatus.*
 
 @Transactional(readOnly = true)
 class StatusReportController {
     def statusReportService
+    def springSecurityService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def date(Integer offset) {
         offset = offset ?: 0
         Date date = new Date() - offset
@@ -16,33 +20,37 @@ class StatusReportController {
         respond statusReportService.getStatusReportsForDate(date), model:[date: date, offset: offset]
     }
 
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def index(Integer max) {
         forward action: "date"
     }
 
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def show(StatusReport statusReport) {
         respond statusReport
     }
 
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def create() {
-        respond new StatusReport(params)
+        def statusReport = new StatusReport(params)
+        def user = User.get(springSecurityService.principal.id)
+        statusReport.setUser(user)
+        respond statusReport
     }
 
-    @Transactional
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def save(StatusReport statusReport) {
         if (statusReport == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
         if (statusReport.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond statusReport.errors, view:'create'
             return
         }
 
-        statusReport.save flush:true
+        statusReportService.save statusReport
 
         request.withFormat {
             form multipartForm {
@@ -53,25 +61,24 @@ class StatusReportController {
         }
     }
 
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def edit(StatusReport statusReport) {
         respond statusReport
     }
 
-    @Transactional
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def update(StatusReport statusReport) {
         if (statusReport == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
         if (statusReport.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond statusReport.errors, view:'edit'
             return
         }
 
-        statusReport.save flush:true
+        statusReportService.save statusReport
 
         request.withFormat {
             form multipartForm {
@@ -82,16 +89,15 @@ class StatusReportController {
         }
     }
 
-    @Transactional
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def delete(StatusReport statusReport) {
 
         if (statusReport == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
-        statusReport.delete flush:true
+        statusReportService.delete statusReport
 
         request.withFormat {
             form multipartForm {
