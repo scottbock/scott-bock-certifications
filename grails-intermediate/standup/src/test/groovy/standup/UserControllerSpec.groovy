@@ -6,13 +6,23 @@ import spock.lang.*
 @TestFor(UserController)
 @Mock(User)
 class UserControllerSpec extends Specification {
+    UserService userService = Mock(UserService)
+
+    def setup(){
+        controller.userService = userService
+
+        userService.save(_ as User) >> {args -> args[0].setId(1)}
+    }
 
     def populateValidParams(params) {
         assert params != null
 
-        // TODO: Populate valid properties like...
-        //params["name"] = 'someValidName'
-        assert false, "TODO: Provide a populateValidParams() implementation for this generated test suite"
+        params["username"] = "username"
+        params["password"] = "password"
+        params["enabled"] = true
+        params["accountExpired"] = false
+        params["accountLocked"] = false
+        params["passwordExpired"] = false
     }
 
     void "Test the index action returns the correct model"() {
@@ -56,7 +66,6 @@ class UserControllerSpec extends Specification {
         then:"A redirect is issued to the show action"
             response.redirectedUrl == '/user/show/1'
             controller.flash.message != null
-            User.count() == 1
     }
 
     void "Test that the show action returns the correct model"() {
@@ -145,7 +154,7 @@ class UserControllerSpec extends Specification {
             controller.delete(user)
 
         then:"The instance is deleted"
-            User.count() == 0
+            1 * userService.delete(_)
             response.redirectedUrl == '/user/index'
             flash.message != null
     }

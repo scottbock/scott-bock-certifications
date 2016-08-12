@@ -7,6 +7,7 @@ import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
 class UserController {
+    def userService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -15,22 +16,24 @@ class UserController {
         respond new User(params)
     }
 
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         respond User.list(params), model:[userCount: User.count()]
     }
 
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def show(User user) {
         respond user
     }
 
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def create() {
         respond new User(params)
     }
 
-    @Transactional
     @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
-    def save(User user) {
+    def saveRegister(User user) {
         if (user == null) {
             transactionStatus.setRollbackOnly()
             notFound()
@@ -39,11 +42,34 @@ class UserController {
 
         if (user.hasErrors()) {
             transactionStatus.setRollbackOnly()
+            respond user.errors, view:'register'
+            return
+        }
+
+        userService.save user
+
+        request.withFormat {
+            form multipartForm {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'user.label', default: 'User'), user.id])
+                redirect(controller: "statusReport", action: "create")
+            }
+            '*' { respond user, [status: CREATED] }
+        }
+    }
+
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
+    def save(User user) {
+        if (user == null) {
+            notFound()
+            return
+        }
+
+        if (user.hasErrors()) {
             respond user.errors, view:'create'
             return
         }
 
-        user.save flush:true
+        userService.save user
 
         request.withFormat {
             form multipartForm {
@@ -54,25 +80,24 @@ class UserController {
         }
     }
 
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def edit(User user) {
         respond user
     }
 
-    @Transactional
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def update(User user) {
         if (user == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
         if (user.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond user.errors, view:'edit'
             return
         }
 
-        user.save flush:true
+        userService.save user
 
         request.withFormat {
             form multipartForm {
@@ -83,16 +108,15 @@ class UserController {
         }
     }
 
-    @Transactional
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def delete(User user) {
 
         if (user == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
-        user.delete flush:true
+        userService.delete user
 
         request.withFormat {
             form multipartForm {

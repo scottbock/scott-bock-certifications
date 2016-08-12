@@ -15,6 +15,18 @@ class StatusReportService {
     }
 
     @Transactional
+    def updateFromMap (Map jsonParams) {
+        StatusReport statusReport = StatusReport.get jsonParams.id
+        statusReport.setProperties jsonParams
+        statusReport.save()
+    }
+
+    @Transactional
+    def saveFromMap (Map jsonParams) {
+        new StatusReport(jsonParams).save()
+    }
+
+    @Transactional
     def save (StatusReport statusReport) {
         statusReport.save flush: true
     }

@@ -1,5 +1,6 @@
 package standup
 
+import grails.plugin.springsecurity.SpringSecurityService
 import grails.test.mixin.*
 import spock.lang.*
 
@@ -8,9 +9,14 @@ import spock.lang.*
 class StatusReportControllerSpec extends Specification {
 
     StatusReportService statusReportServiceMock = Mock(StatusReportService)
+    SpringSecurityService springSecurityService = Mock(SpringSecurityService)
 
     def setup() {
         controller.statusReportService = statusReportServiceMock
+        controller.springSecurityService = springSecurityService
+
+        controller.metaClass.getLoggedInUser = { new User(id: 1) }
+
         statusReportServiceMock.save(_ as StatusReport) >> {args -> args[0].setId(1)}
     }
 
@@ -19,7 +25,8 @@ class StatusReportControllerSpec extends Specification {
 
         // TODO: Populate valid properties like...
         //params["name"] = 'someValidName'
-        params["name"] = 'Tom'
+        User user = new User();
+        params["user"] = user;
         params["yesterdayAccomplished"] = 'Not Much'
         params["todayPlan"] = 'A little more'
         params["impediments"] = 'Email Server down'

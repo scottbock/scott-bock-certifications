@@ -33,7 +33,7 @@ class StatusReportController {
     @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def create() {
         def statusReport = new StatusReport(params)
-        def user = User.get(springSecurityService.principal.id)
+        def user = getLoggedInUser()
         statusReport.setUser(user)
         respond statusReport
     }
@@ -116,6 +116,10 @@ class StatusReportController {
             }
             '*'{ render status: NOT_FOUND }
         }
+    }
+
+    protected User getLoggedInUser(){
+        User.get(springSecurityService.principal.id)
     }
 
 

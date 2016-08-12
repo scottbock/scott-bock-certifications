@@ -25,7 +25,7 @@
                 </g:eachError>
             </ul>
             </g:hasErrors>
-            <g:form action="save">
+            <g:form action="saveRegister">
                 <fieldset class="form">
                     <f:field bean="user" property="username"/>
                     <f:field property="password" bean="user" />

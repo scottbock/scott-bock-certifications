@@ -8,6 +8,9 @@ class UrlMappings {
                 // apply constraints here
             }
         }
+        "/api/$date?/status/$id?"(controller: "statusReportRest") {
+            action = [GET: "show", PUT: "update", POST: "save"]
+        }
 
         "/"(view:"/index")
         "500"(view:'/error')
